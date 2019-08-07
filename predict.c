@@ -172,7 +172,7 @@ double	tsince, jul_epoch, jul_utc, eclipse_depth=0,
 	moon_az, moon_el, moon_dx, moon_ra, moon_dec, moon_gha, moon_dv;
 
 char	qthfile[50], tlefile[50], dbfile[50], temp[80], output[25],
-	serial_port[15], resave=0, reload_tle=0, netport[7],
+	serial_port[15], resave=0, reload_tle=0, netport[32],
 	once_per_second=0, ephem[5], sat_sun_status, findsun,
 	calc_squint, database=0, xterm, io_lat='N', io_lon='W';
 
@@ -2048,7 +2048,7 @@ char *predict_name;
 	/* Open a socket port at "predict" or netport if defined */
 
 	if (netport[0]==0)
-		strncpy(netport,"predict",7);
+		strcpy(netport,"predict");
 
 	sock=passivesock(netport,"udp",10);
  	alen=sizeof(fsin);
@@ -2429,7 +2429,12 @@ int n;
 	   out of the generated substring.  n is the length of the desired
 	   substring.  It is used for abbreviating satellite names. */
 
-	strncpy(temp,string,79);
+	if (strlen(string) >= 80) {
+		fprintf(stderr, "String too long\n");
+		exit(1);
+	} else {
+		strcpy(temp,string);
+	}
 
 	if (temp[n]!=0 && temp[n]!=32)
 	{
@@ -2488,8 +2493,7 @@ int x;
 
 	double tempnum;
 
-	strncpy(sat[x].designator,SubString(sat[x].line1,9,16),8);
-	sat[x].designator[9]=0;
+	strcpy(sat[x].designator,SubString(sat[x].line1,9,16));
 	sat[x].catnum=atol(SubString(sat[x].line1,2,6));
 	sat[x].year=atoi(SubString(sat[x].line1,18,19));
 	sat[x].refepoch=atof(SubString(sat[x].line1,20,31));
@@ -2767,9 +2771,12 @@ char ReadDataFiles()
 				
 				/* Copy TLE data into the sat data structure */
 
-				strncpy(sat[x].name,name,24);
-				strncpy(sat[x].line1,line1,69);
-				strncpy(sat[x].line2,line2,69);
+				name[24] = '\0';
+				strcpy(sat[x].name,name);
+				line1[69] = '\0';
+				strcpy(sat[x].line1,line1);
+				line2[69] = '\0';
+				strcpy(sat[x].line2,line2);
 
 				/* Update individual parameters */
 
@@ -3070,8 +3077,8 @@ char *string;
 					   Copy strings str1 and
 					   str2 into line1 and line2 */
 
-					strncpy(line1,str1,75);
-					strncpy(line2,str2,75);
+					strcpy(line1,str1);
+					strcpy(line2,str2);
 					kepcount++;
 
 					/* Scan for object number in datafile to see
@@ -3127,8 +3134,10 @@ char *string;
 
 							/* Copy TLE data into the sat data structure */
 
-							strncpy(sat[i].line1,line1,69);
-							strncpy(sat[i].line2,line2,69);
+							line1[69] = '\0';
+							strcpy(sat[i].line1,line1);
+							line2[69] = '\0';
+							strcpy(sat[i].line2,line2);
 							InternalUpdate(i);
 						}
 					}
@@ -4540,7 +4549,7 @@ int x,y;
 	{
 		need2save=1;  /* Save new data to variables */
 		resave=1;     /* Save new data to disk files */
-		strncpy(temp,input,24);
+		strcpy(temp,input);
 	}
 
 	mvprintw(y-1,x-1,"%-25s",temp);
@@ -4696,7 +4705,7 @@ void KepEdit()
 			sprintf(temp,"%s",sat[x].name);
 
 			if (KbEdit(43,8))
-				strncpy(sat[x].name,temp,24);
+				strcpy(sat[x].name,temp);
 
 			sprintf(temp,"%ld",sat[x].catnum);
 
@@ -4818,7 +4827,7 @@ void QthEdit()
 	mvprintw(18,12,"Enter the callsign or identifier of your ground station");
 
 	if (KbEdit(45,12))
-		strncpy(qth.callsign,temp,16);
+		strcpy(qth.callsign,temp);
 
 	if (io_lat=='N')
 		sprintf(temp,"%g [DegN]",+qth.stnlat);
@@ -6335,8 +6344,14 @@ char argc, *argv[];
 		if (strcmp(argv[x],"-n")==0)
 		{
 			z=x+1;
-			if (z<=y && argv[z][0] && argv[z][0]!='-')
-				strncpy(netport,argv[z],5);
+			if (z<=y && argv[z][0] && argv[z][0]!='-') {
+				if (strlen(argv[z]) >= 32) {
+					fprintf(stderr, "Network service name is too long\n");
+					exit(1);
+				} else {
+					strcpy(netport,argv[z]);
+				}
+			}
 		}
 
 		if (strcmp(argv[x],"-s")==0)

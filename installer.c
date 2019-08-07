@@ -154,10 +154,18 @@ char argc, *argv[];
 		   to this program (ie: installer /usr/bin).  Normally this
 		   is passed along from the "configure" script. */
 	
-		if (argc==2)
-			strncpy(destination,argv[1],78);
-		else	
-			strncpy(destination,"/usr/local/bin/\0",16);
+		if (argc==2) {
+			if (strlen(argv[1]) >= 80) {
+				fprintf(stderr, "Installation folder is too long\n");
+				exit(1);
+			}
+			else {
+				strcpy(destination,argv[1]);
+			}
+		}
+		else {
+			strcpy(destination,"/usr/local/bin/\0");
+		}
 
 		/* Ensure a trailing '/' is
 		   present in "destination". */
