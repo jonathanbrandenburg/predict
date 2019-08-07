@@ -18,6 +18,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <sys/soundcard.h>
 
@@ -191,6 +194,16 @@ char argc, *argv[];
 			sprintf(src_path,"%s/xpredict",pwd);
 			symlink(src_path,dest_path);
 			unlink("/usr/local/man/man1/predict.1");
+
+			DIR *mandir;
+			mandir = opendir("/usr/local/man/man1");
+			if (mandir == NULL) {
+				mkdir("/usr/local/man/man1", 0755);
+				mandir = opendir("/usr/local/man/man1");
+				if (mandir == NULL) {
+					printw("  Unable to create man directory\n\n");
+				}
+			}
 			sprintf(dest_path,"%s/docs/man/predict.1",pwd);
 			symlink(dest_path,"/usr/local/man/man1/predict.1");
 
