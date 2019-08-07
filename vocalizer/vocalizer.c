@@ -67,7 +67,7 @@ int indx;
 		return 0;
 }
 
-int wavplay(filename)
+int wavplay1(filename)
 char *filename;
 {
 	int x, y, format, bits, bytes, channels, dsp, fd;
@@ -178,6 +178,31 @@ char *filename;
 		fprintf(stderr,"*** vocalizer: Could not extract format from header.\n");
 
 	return 0;
+}
+
+int wavplay(char *filename)
+{
+	int aplay;
+	aplay = open("/usr/bin/aplay", O_RDONLY);
+	if (aplay != -1)
+	{
+		close(aplay);
+		
+		char filenpath[80];
+
+		strncpy(filenpath,path,79);
+		strncat(filenpath,filename,79);
+		strncat(filenpath,".wav",79);
+
+		char command[128];
+		snprintf(command, 128, "cat %s | /usr/bin/aplay > /dev/null 2>&1", filenpath);
+		system(command);
+		return 0;
+	}
+	else
+	{
+		return wavplay1(filename);
+	}
 }
 
 void saynumber(num)

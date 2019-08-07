@@ -62,6 +62,13 @@ char argc, *argv[];
 	if (dsp!=-1)
 		close(dsp);
 
+	if (dsp == -1) {
+		dsp = open("/usr/bin/aplay", O_RDONLY);
+		if (dsp != -1) {
+			close(dsp);
+		}
+	}
+
 	infile=fopen(".version","r");
 	fscanf(infile,"%s",version);
 	fclose(infile);
@@ -101,8 +108,8 @@ char argc, *argv[];
 		attrset(COLOR_PAIR(4)|A_BOLD);
 		printw("\n\n\n\n  PREDICT appears to be installed under %s/\n",pwd);
 
-		if (dsp!=-1)
-			printw("  An audio device was found at /dev/dsp");
+		if (dsp != -1)
+			printw("  An audio device was found at /dev/dsp or /usr/bin/aplay");
 		else
 			printw("  No soundcard was found in your system... Bummer!");
 
@@ -114,10 +121,10 @@ char argc, *argv[];
 
 		fprintf(outfile,"char *predictpath={\"%s/\"}, ",pwd);
 
-		if (dsp==-1)
-			fprintf(outfile, "soundcard=0,");
-		else
+		if (dsp != -1)
 			fprintf(outfile, "soundcard=1,");
+		else
+			fprintf(outfile, "soundcard=0,");
 
 		fprintf(outfile, " *version={\"%s\"};\n",version);
 
