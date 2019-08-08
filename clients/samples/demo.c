@@ -217,7 +217,7 @@ char *host, *command;
 int main()
 {
 	int x, y, z, satnum;
-	char buf[128], command[128], satlist[625], satname[26],
+	char buf[256], command[128], satlist[625], satname[26],
 	     visibility, satnamelist[26][26], event[15], squint_string[15];
 	long aostime, orbitnum, start;
 	float az, el, slong, slat, footprint, range, altitude,
