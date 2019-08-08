@@ -6082,6 +6082,7 @@ char *string, *outputfile;
 
 					while (iel>=0)
 					{
+						doppler100=-100.0e06*((sat_range_rate*1000.0)/299792458.0);
 						fprintf(fd,"%.0f %s %4d %4d %4d %4d %4d %6ld %6ld %c %f\n",floor(86400.0*(3651.0+daynum)),Daynum2String(daynum),iel,iaz,ma256,isplat,isplong,irk,rv,findsun,doppler100);
 						lastel=iel;
 						daynum+=cos((sat_ele-1.0)*deg2rad)*sqrt(sat_alt)/25000.0;
@@ -6092,6 +6093,7 @@ char *string, *outputfile;
 					{
 						daynum=FindLOS();
 						Calc();
+						doppler100=-100.0e06*((sat_range_rate*1000.0)/299792458.0);
 						fprintf(fd,"%.0f %s %4d %4d %4d %4d %4d %6ld %6ld %c %f\n",floor(86400.0*(3651.0+daynum)),Daynum2String(daynum),iel,iaz,ma256,isplat,isplong,irk,rv,findsun,doppler100);
 					}
 				}
